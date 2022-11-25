@@ -12,3 +12,5 @@ class MainWindow(QMainWindow):
         grid = QGridLayout()
 
         widget.setLayout(grid)
+
+treff
