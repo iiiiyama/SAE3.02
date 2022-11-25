@@ -7,17 +7,17 @@ def serveur():
     server_socket = socket.socket()
     server_socket.bind((host, port))
     server_socket.listen(1)
-    client_socket, client_address = server_socket.accept()
+    conn_client, client_address = server_socket.accept()
     while True:
-        data = client_socket.recv(1024).decode()
+        data = conn_client.recv(1024).decode()
         print(f"from connected user {host}:" + str(data))
         if data == 'bye':
-            client_socket.send('bye'.encode())
-            client_socket.close()
+            conn_client.send('bye'.encode())
+            conn_client.close()
             server_socket.close()
             break
         data = input("->")
-        client_socket.send(data.encode())
+        conn_client.send(data.encode())
     #while False:
         #print("en attente d'un client ...")
 

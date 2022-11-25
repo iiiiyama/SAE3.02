@@ -17,17 +17,16 @@ def client():
         if data.lower() == "bye":
             client_socket.close()
 
-        if msg == 'os':
+        if msg == 'os' or 'OS':
             if platform.system() == 'Windows':
                 print(platform.system())
                 if msg == 'ip' or 'ipconfig':
-                    data = socket.gethostbyname_ex(socket.gethostname())
-                    client_socket.send(msg.encode())
+                    print([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")][0])
 
             elif platform.system() == 'Linux':
                 print(platform.system())
                 if msg == 'ip a' or 'ip address':
-                    print(socket.gethostbyname_ex(socket.gethostname()))
+                    print([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")][0])
 
 
 if __name__ == '__main__':
