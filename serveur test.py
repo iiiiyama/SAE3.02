@@ -2,7 +2,7 @@ import socket
 import threading
 import multiprocessing
 import time
-from _thread import *
+
 
 no_print = threading.Lock()
 
@@ -20,9 +20,9 @@ def thread(conn_client):
 
 def serveur():
     host = ""
-    port = 5092
+    port = 5102
     msg = ''
-    T = []
+    t = []
 
     while msg != 'kill':
 
@@ -34,15 +34,18 @@ def serveur():
         while msg != 'kill' and msg != 'reset':
 
             print("en attente d'un client ...")
+
             # accepte la connexion du client
             conn_client, client_address = server_socket.accept()
+
+            # précise à quel adresse le cllient est connecté et sur quel port
+            print("connected to :", client_address[0], "on the port", client_address[1])
+            t.append(threading.Thread(target=thread(conn_client)))
 
             while msg != 'disconnect':
                 # reçoit les message envoyé par le client
                 msg = conn_client.recv(1024).decode()
-                # précise à quel adresse le cllient est connecté et sur quel port
-                print("connected to :", client_address[0], "on the port", client_address[1])
-                T.append(threading.Thread(target=conn_client))
+
 
             server_socket.close()
         server_socket.close()
