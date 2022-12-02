@@ -1,33 +1,38 @@
 import socket
-import threading
-import multiprocessing
-import time
+from threading import Thread
 
 
-no_print = threading.Lock()
+def envoi(client):
+    msg = ''
+    while msg != 'disconnect' and msg != 'reset' and msg != 'kill':
+        msg = input("->")
+        msg = msg.encode()
+        client.send(msg)
 
 
-def thread(conn_client):
-    while True:
-        data = conn_client.recv(1024)
+def reception(client):
+    msg = ''
+    while msg != 'kill' and msg != 'reset' and msg != 'disconnect':
+        # reçoit les message envoyé par le client
+        data = client.recv(1024)
+        data = data.decode()
+        print(data)
         if not data:
-            print("bye")
-            no_print.release()
+            print("connexion closed")
             break
-        conn_client.send(data)
-    conn_client.close()
+    client.close()
 
 
 def serveur():
     host = ""
     port = 5102
     msg = ''
-    t = []
 
     while msg != 'kill':
 
         # crée le socket, peut réutiliser la même adresse et port, associe l'host et le port puis écoute le port
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server_socket.bind((host, port))
         server_socket.listen(5)
 
@@ -38,19 +43,13 @@ def serveur():
             # accepte la connexion du client
             conn_client, client_address = server_socket.accept()
 
-            # précise à quel adresse le cllient est connecté et sur quel port
+            # précise à quel adresse le client est connecté et sur quel port
             print("connected to :", client_address[0], "on the port", client_address[1])
-            t.append(threading.Thread(target=thread(conn_client)))
 
-            while msg != 'disconnect':
-                # reçoit les message envoyé par le client
-                msg = conn_client.recv(1024).decode()
-
-
-            server_socket.close()
         server_socket.close()
-    server_socket.close()
 
 
 if __name__ == '__main__':
     serveur()
+    send = Thread(target=envoi, args=[client])
+    recep = Thread(target=reception, args=[client])
