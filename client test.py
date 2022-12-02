@@ -1,12 +1,26 @@
 import socket
+from threading import Thread
 
 
-def envoi(client):
+def envoi(socket):
     msg = ''
     while msg != 'disconnect' and msg != 'reset' and msg != 'kill':
         msg = input("->")
         msg = msg.encode()
-        client.send(msg)
+        socket.send(msg)
+
+
+def reception(socket):
+    msg = ''
+    while msg != 'kill' and msg != 'reset' and msg != 'disconnect':
+        # reçoit les message envoyé par le client
+        data = socket.recv(1024)
+        data = data.decode()
+        print(data)
+        if not data:
+            print("connexion closed")
+            break
+    socket.close()
 
 
 def client():
@@ -30,3 +44,7 @@ def client():
 
 if __name__ == '__main__':
     client()
+    send = Thread(target=envoi, args=[client])
+    recep = Thread(target=reception, args=[client])
+    send.start()
+    recep.start()

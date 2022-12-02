@@ -8,6 +8,7 @@ def envoi(client):
         msg = input("->")
         msg = msg.encode()
         client.send(msg)
+    client.close()
 
 
 def reception(client):
@@ -53,3 +54,6 @@ if __name__ == '__main__':
     serveur()
     send = Thread(target=envoi, args=[client])
     recep = Thread(target=reception, args=[client])
+    send.start()
+    recep.start()
+    
