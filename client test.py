@@ -1,7 +1,7 @@
 from threading import Thread
 import socket
 
-
+# thread pour l'envoi
 def Send(socket):
     msg = ''
     while msg != 'kill' and msg != 'reset' and msg != 'disconnect':

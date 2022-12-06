@@ -31,7 +31,6 @@ class serveur(socket):
         while msg != 'kill':
             # crée le socket, peut réutiliser la même adresse et port, associe l'host et le port puis écoute le port
             socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
             socket.bind((Host, Port))
             socket.listen(5)
