@@ -5,7 +5,7 @@ import platform
 def client():
 
     host = 'localhost'
-    port = 5102
+    port = 5182
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 

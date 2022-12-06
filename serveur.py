@@ -1,10 +1,5 @@
 import socket
 import threading
-import multiprocessing
-import time
-
-
-no_print = threading.Lock()
 
 
 def thread(conn_client):
@@ -12,7 +7,6 @@ def thread(conn_client):
         data = conn_client.recv(1024)
         if not data:
             print("bye")
-            no_print.release()
             break
         conn_client.send(data)
     conn_client.close()
@@ -20,7 +14,7 @@ def thread(conn_client):
 
 def serveur():
     host = ""
-    port = 5102
+    port = 5182
     msg = ''
     t = []
 
@@ -48,9 +42,8 @@ def serveur():
                 # reçoit les message envoyé par le client
                 msg = conn_client.recv(1024).decode()
 
-            server_socket.close()
+            conn_client.close()
         server_socket.close()
-    server_socket.close()
 
 
 if __name__ == '__main__':

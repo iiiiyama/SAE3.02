@@ -1,40 +1,55 @@
 from threading import Thread
 import socket
 
+
+
+
 def Send(client):
-    while True:
-        msg = input()
+    msg = ''
+    while msg != 'disconnect':
+        msg = ("->")
         msg = msg.encode("utf-8")
         client.send(msg)
+    client.close()
+
+
 def Reception(client):
-    while True:
-        requete_client = client.recv(500)
-        requete_client = requete_client.decode('utf-8')
-        print(requete_client)
-        if not requete_client : #Si on pert la connexion
-            print("CLOSE")
+    msg = ''
+    while msg != 'kill' and msg != 'reset' and msg != 'disconnect':
+        data = client.recv(1024)
+        data = data.decode('utf-8')
+        print(data)
+        if not data:
+            print("connexion closed")
             break
+    client.close()
+
 
 Host = "127.0.0.1"
-Port = 6390
+Port = 5010
+msg = ''
 
-#Création du socket
-socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+while msg != 'kill':
+    # crée le socket, peut réutiliser la même adresse et port, associe l'host et le port puis écoute le port
+    socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-socket.bind((Host,Port))
-socket.listen(1)
+    socket.bind((Host, Port))
+    socket.listen(1)
 
-#Le script s'arrête jusqu'a une connection
-client, ip = socket.accept()
-print("Le client d'ip",ip,"s'est connecté")
+    while msg != 'kill' and msg != 'reset':
+        # accepte la connexion du client
+        client, ip = socket.accept()
+        # précise à quel adresse le cllient est connecté et sur quel port
+        print("connected to :", ip[0], "on the port", ip[1])
 
-envoi = Thread(target=Send,args=[client])
-recep = Thread(target=Reception,args=[client])
+        envoi = Thread(target=Send, args=[client])
+        recep = Thread(target=Reception, args=[client])
 
-envoi.start()
-recep.start()
+        envoi.start()
+        recep.start()
 
-recep.join()
+        recep.join()
 
-client.close()
-socket.close()
+        client.close()
+    socket.close()
+

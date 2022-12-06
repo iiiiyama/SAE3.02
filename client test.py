@@ -3,21 +3,25 @@ import socket
 
 
 def Send(socket):
-    while True:
+    msg = ''
+    while msg != 'kill' and msg != 'reset' and msg != 'disconnect':
         msg = input("->")
         msg = msg.encode('utf-8')
         socket.send(msg)
+    socket.close()
 
 
 def Reception(socket):
-    while True:
-        requete_server = socket.recv(1024)
-        requete_server = requete_server.decode("utf-8")
-        print(requete_server)
+    msg = "->"
+    while msg != 'disconnect':
+        data = socket.recv(1024)
+        data = data.decode("utf-8")
+        print(data)
+    socket.close()
 
 
 Host = "127.0.0.1"
-Port = 6390
+Port = 5070
 
 # Création du socket
 socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
