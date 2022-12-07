@@ -1,49 +1,69 @@
+from threading import Thread
 import socket
-import threading
+import platform
+import os
+import subprocess
+
+Host = "127.0.0.1"
+Port = 9454
 
 
-def thread(conn_client):
-    while True:
-        data = conn_client.recv(1024)
+def Send(client):
+    msg = client.recv(1024)
+    while msg != 'disconnect':
+        msg = msg.encode("utf-8")
+        client.send(msg)
+    client.close()
+
+
+def Reception(client):
+    msg = client.recv(1024)
+    while msg != 'kill' and msg != 'reset' and msg != 'disconnect':
+        data = client.recv(1024)
+        data = data.decode('utf-8')
+        print(data)
+
         if not data:
-            print("bye")
+            print("connexion closed")
             break
-        conn_client.send(data)
-    conn_client.close()
+    client.close()
 
 
-def serveur():
-    host = ""
-    port = 5182
+class serveur(socket):
     msg = ''
-    t = []
-
     while msg != 'kill':
-
         # crée le socket, peut réutiliser la même adresse et port, associe l'host et le port puis écoute le port
-        server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        server_socket.bind((host, port))
-        server_socket.listen(5)
+        socket.bind((Host, Port))
+        socket.listen(5)
 
         while msg != 'kill' and msg != 'reset':
-
-            print("en attente d'un client ...")
-
             # accepte la connexion du client
-            conn_client, client_address = server_socket.accept()
-
+            print("en attente d'un client ...")
+            client, ip = socket.accept()
             # précise à quel adresse le cllient est connecté et sur quel port
-            print("connected to :", client_address[0], "on the port", client_address[1])
-            t.append(threading.Thread(target=thread(conn_client)))
+            print("connected to :", ip[0], "on the port", ip[1])
 
             while msg != 'kill' and msg != 'reset' and msg != 'disconnect':
-                # reçoit les message envoyé par le client
-                msg = conn_client.recv(1024).decode()
+                data = client.recv(1024)
+                data = data.decode('utf-8')
+                print(data)
 
-            conn_client.close()
-        server_socket.close()
+            socket.close()
+            client.close()
+
+            envoi = Thread(target=Send, args=[client])
+            recep = Thread(target=Reception, args=[client])
+
+            envoi.start()
+            recep.start()
+
+            recep.join()
+
+        socket.close()
+
+    socket.close()
 
 
 if __name__ == '__main__':
