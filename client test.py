@@ -2,26 +2,33 @@ from threading import Thread
 import socket
 
 # thread pour l'envoi
+
+
 def Send(socket):
     msg = ''
-    while msg != 'kill' and msg != 'reset' and msg != 'disconnect':
+    while msg != "kill" and msg != "reset" and msg != "disconnect":
         msg = input("->")
-        msg = msg.encode('utf-8')
+        msg = msg.encode()
         socket.send(msg)
-    socket.close()
+    else:
+        print("le serveur à fermer la connection")
+        socket.close()
 
 
 def Reception(socket):
     msg = "->"
-    while msg != 'disconnect':
+    while msg != "disconnect":
         data = socket.recv(1024)
-        data = data.decode("utf-8")
-        print(data)
-    socket.close()
+        data = data.decode()
+        print(f'received from server: {data}\n')
+    else:
+        print("le serveur à fermer la connection")
+        socket.close()
 
 
 Host = "127.0.0.1"
-Port = 5070
+Port = 5898
+
 
 # Création du socket
 socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -32,3 +39,5 @@ recep = Thread(target=Reception, args=[socket])
 
 envoi.start()
 recep.start()
+
+
