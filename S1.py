@@ -1,8 +1,32 @@
 from threading import Thread
 import socket
+import os
+import platform
+import psutil
 
 Host = 'localhost'
-Port = 5898
+Port = 5108
+
+msg_client = ''
+def cmd(msg_client):
+
+    if msg_client == 'os':
+        data = platform.system()
+
+        return data
+    elif msg_client == 'ip' or msg_client == 'ipconfig' or msg_client == 'ip a':
+        data = socket.gethostbyname(socket.gethostname())
+
+        return data
+    elif msg_client == 'ram':
+        ram = psutil.virtual_memory()[0]/1000000000
+        ram2 = psutil.virtual_memory()[3] / 1000000000
+        ram3 = psutil.virtual_memory()[4] / 1000000000
+
+        return f"{ram} GB, {ram2} GB, {ram3} GB"
+    else:
+        return f"commande non reconnu"
+
 
 def Send(client):
     msg_client = ""
@@ -10,8 +34,9 @@ def Send(client):
         msg = input("Serveur -> ")
         msg = msg.encode()
         client.send(msg)
+
     else:
-        socket.close()
+        socket_server.close()
 
 
 def Reception(client):
@@ -20,18 +45,22 @@ def Reception(client):
         print("en attente d'un message ...")
         msg_client = client.recv(1024).decode()
         print(f' {msg_client}\n')
+        msg = cmd(msg_client)
+        client.send(msg.encode())
+
     else:
         print("Je ferme la socket")
         client.close()
+        socket_server.close()
 
 
 if __name__ == '__main__':
-    socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    socket.bind((Host, Port))
-    socket.listen(1)
-    print("Client t'es ou ?")
+    socket_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    socket_server.bind((Host, Port))
+    socket_server.listen(1)
+    print("en attente d'un client ...")
 
-    client, ip = socket.accept()
+    client, ip = socket_server.accept()
     print("connected to :", ip[0], "on the port", ip[1])
 
     Send = Thread(target=Send, args=[client])
