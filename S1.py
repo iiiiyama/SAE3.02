@@ -8,6 +8,8 @@ Host = 'localhost'
 Port = 5108
 
 msg_client = ''
+
+
 def cmd(msg_client):
 
     if msg_client == 'os':
@@ -24,6 +26,12 @@ def cmd(msg_client):
         ram3 = psutil.virtual_memory()[4] / 1000000000
 
         return f"{ram} GB, {ram2} GB, {ram3} GB"
+
+    elif msg_client == 'cpu':
+        cpu = psutil.cpu_count()
+
+        return f"{cpu}"
+
     else:
         return f"commande non reconnu"
 
