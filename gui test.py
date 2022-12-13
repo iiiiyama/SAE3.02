@@ -1,5 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QTabWidget, QGridLayout, QLabel, QTextEdit, QLineEdit, QPushButton, QApplication, \
-    QMainWindow
+from PyQt5.QtWidgets import QWidget, QTabWidget, QGridLayout, QLabel, QTextEdit, QLineEdit, QPushButton, QApplication, QMainWindow
 import sys
 import threading
 import socket
