@@ -7,10 +7,29 @@ from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QFont
 
 
+Host = '127.0.0.1'
+Port = 5108
+
+
 class fonction(QWidget):
-    def __init__(self, parent):
+    def __init__(self, parent, host, port):
         super(QWidget, self).__init__(parent)
         self.conn = socket.socket()
+        self.conn.connect((host, port))
+        self.run = True
+
+        GUI_thread = threading.Thread(target=self.gui_loop)
+        receive_thread = threading.Thread(target=self.receive)
+
+        GUI_thread.start()
+        receive_thread.start()
+
+        self.widget = QTabWidget()
+
+        self.layout = QVBoxLayout()
+
+        self.widget.setLayout(self.layout)
+
         self.__lab = QLabel("message")
         self.__text = QLineEdit("taper votre message ici")
         self.__rep = QLabel("")
@@ -46,12 +65,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        widget = QTabWidget()
-        self.setCentralWidget(widget)
 
-        self.layout = QVBoxLayout()
-
-        widget.setLayout(self.layout)
 
 
 

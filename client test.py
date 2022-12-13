@@ -1,9 +1,9 @@
 from threading import Thread
 import socket
 
+
+
 # thread pour l'envoi
-
-
 def Send(socket):
     msg = ''
     while msg != "kill" and msg != "reset" and msg != "disconnect":
@@ -15,6 +15,7 @@ def Send(socket):
         socket.close()
 
 
+# thread pour la reception
 def Reception(socket):
     msg = "->"
     while msg != "disconnect":
@@ -27,7 +28,7 @@ def Reception(socket):
 
 
 Host = "127.0.0.1"
-Port = 5898
+Port = 5108
 
 
 # Création du socket
