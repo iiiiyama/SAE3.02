@@ -26,8 +26,7 @@ class client_window(QMainWindow):
         self.__envoimsg = QPushButton('ENVOI')
         self.__envoimsg.clicked.connect(self.__sendmsg)
 
-        self.__terminal = QTextEdit()
-        self.__terminal.setReadOnly(True)
+        self.__terminal = QLineEdit()
 
         layout.addWidget(self.__host_line_edit, 0, 0)
         layout.addWidget(self.__port_line_edit, 0, 1)
@@ -62,6 +61,7 @@ class client_window(QMainWindow):
                 data = self.__client_socket.recv(1024).decode()
                 if data is not None:
                     if len(data) > 0:
+                        # affiche le résultat dans le terminal
                         self.__terminal.setText(self.__terminal.text() + data + '\n')
             except:
                 pass
@@ -73,6 +73,7 @@ class client_window(QMainWindow):
             try:
                 self.__client_socket.send(commande.encode())
             except:
+                # affiche un message d'erreur quand le client n'esy connecté à aucun serveur
                 self.__terminal.setText(self.__terminal.text() + 'Connection perdue\n')
 
     def closeEvent(self, event):
