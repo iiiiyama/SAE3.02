@@ -20,7 +20,7 @@ class client_window(QMainWindow):
         self.__port_line_edit = QLineEdit()
         self.__port_line_edit.setPlaceholderText('Insérez le PORT')
 
-        self.__connect_button = QPushButton('Connection')
+        self.__connect_button = QPushButton('Connexion')
         self.__connect_button.clicked.connect(self.__connection)
         self.__ecriremsg = QLineEdit()
         self.__ecriremsg.setPlaceholderText('ECRIRE COMMANDE')

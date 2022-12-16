@@ -1,8 +1,10 @@
 from threading import Thread
 import socket
 import os
+import readline
 import platform
 import psutil
+import subprocess
 
 Host = 'localhost'
 Port = 5108
@@ -32,6 +34,16 @@ def cmd(msg_client):
 
         return f"{cpu}"
 
+    elif msg_client == 'host' or msg_client == 'hostname' or msg_client == 'name':
+        hostname = socket.gethostname()
+
+        return f"{hostname}"
+
+    # elif msg_client == ' ':
+    #   dos = subprocess.Popen("echo %s", shell=True, stdout=subprocess.PIPE).stdout.read()
+
+    #    return f"{dos}"
+
     else:
         return f"commande non reconnu"
 
@@ -42,6 +54,16 @@ def Send(client):
         msg = input("Serveur -> ")
         msg = msg.encode()
         client.send(msg)
+
+    # pour les utilisateurs linux
+    #################################################################
+    readline.parse_and_bind('')
+    histfile = os.path.join(os.environ['HOME'], '.pythonhistory')
+    try:
+        readline.read_history_file(histfile)
+    except IOError:
+        pass
+    ##################################################################
 
     else:
         socket_server.close()
