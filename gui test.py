@@ -11,6 +11,8 @@ class client_window(QMainWindow):
         self.setCentralWidget(widget)
         layout = QGridLayout()
         widget.setLayout(layout)
+        self.setFixedWidth(550)
+        self.setFixedHeight(300)
 
         self.__host_line_edit = QLineEdit()
         self.__host_line_edit.setPlaceholderText("Insérez l'adresse")
@@ -27,13 +29,15 @@ class client_window(QMainWindow):
         self.__envoimsg.clicked.connect(self.__sendmsg)
 
         self.__terminal = QLineEdit()
+        self.__terminal.setReadOnly(True)
 
+        # dimension des boutons
         layout.addWidget(self.__host_line_edit, 0, 0)
         layout.addWidget(self.__port_line_edit, 0, 1)
         layout.addWidget(self.__connect_button, 0, 2)
         layout.addWidget(self.__terminal, 1, 0, 1, 3)
-        layout.addWidget(self.__ecriremsg, 2, 0, 1, 2)
-        layout.addWidget(self.__envoimsg, 2, 2, 1, 1)
+        layout.addWidget(self.__ecriremsg, 2, 0, 1, 3)
+        layout.addWidget(self.__envoimsg, 2, 2)
 
         self.__client_socket = None
         self.__arret = False
@@ -62,7 +66,7 @@ class client_window(QMainWindow):
                 if data is not None:
                     if len(data) > 0:
                         # affiche le résultat dans le terminal
-                        self.__terminal.setText(self.__terminal.text() + data + '\n')
+                        self.__terminal.setPlaceholderText(self.__terminal.text() + data + '\n')
             except:
                 pass
 
@@ -73,8 +77,8 @@ class client_window(QMainWindow):
             try:
                 self.__client_socket.send(commande.encode())
             except:
-                # affiche un message d'erreur quand le client n'esy connecté à aucun serveur
-                self.__terminal.setText(self.__terminal.text() + 'Connection perdue\n')
+                # affiche un message d'erreur quand le client n'est connecté à aucun serveur
+                self.__terminal.setPlaceholderText(self.__terminal.text() + 'Connection perdue\n')
 
     def closeEvent(self, event):
         self.__client_socket.close()
