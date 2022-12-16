@@ -66,7 +66,7 @@ def Send(client):
     ##################################################################
 
     else:
-        socket_server.close()
+        client.close()
 
 
 def Reception(client):
